@@ -14,6 +14,8 @@ import write_2_excel
 # gen_word_cloud.py
 import gen_word_cloud
 
+# convert_to_anki.py
+import convert_to_anki
 
 
 '''
@@ -91,7 +93,13 @@ def load_txt_data(file_name):
 获得字符串的分词列表
 '''
 def get_words(text):
-    stopWords = set(stopwords.words('english'))
+    stop_local = ['a', 'were', 'your', 'yes', 'no', 'one',
+        'two', 'three', 'four', 'five', 'six', 'seven', 'eight',
+        'nine', 'ten', 'apple', 'apple', 'orange']
+
+    s = stopwords.words('english') + stop_local
+
+    stopWords = set(s)
 
     # sent_tokenize 文本分句处理，text是一个英文句子或文章
     value = nltk.sent_tokenize(text)
@@ -104,7 +112,12 @@ def get_words(text):
         words = nltk.word_tokenize(text=i)
 
         for w in words:
-            word_list.append(w)
+            word_in_phrase = {}
+            word_in_phrase['word'] = w
+            # 添加例句
+            word_in_phrase['phrase'] = words
+
+            word_list.append(word_in_phrase)
     '''
 
     # 直接对整篇文章 分词
@@ -182,8 +195,11 @@ if __name__ == '__main__':
     w_2_excel.write_excel()
 
     # 生成词云
-    g_word_cloud = gen_word_cloud.Gen_Word_Cloud(input_name)
-    g_word_cloud.gen_pic()
+    # g_word_cloud = gen_word_cloud.Gen_Word_Cloud(input_name)
+    # g_word_cloud.gen_pic()
+
+    # 开始生成 Anki 文件
+    c_anki = convert_to_anki.gen_apgk(succ_list, 'output/' + output_name)
 
     # 输出 最终结果
     print('\n\n#########################')
